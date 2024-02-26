@@ -9,7 +9,7 @@ class ConnectDb{
     }
     async connecter() {
         try {
-            this.client = new MongoClient(url, {useNewUrlParser: true, useUnifiedTopology: true});
+            this.client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
             this.client.connect();
             this.db = this.client.db(dbname); 
             console.log('Connecter a la base de donnee MongoDB')
