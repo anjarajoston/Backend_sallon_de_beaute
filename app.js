@@ -94,10 +94,11 @@ app.get('/', async (req, res) => {
         console.error(error)
         res.status(500).send('Erreur de Serveur')
     }
-}).get('/liste_rendez_vous', async (req, res) => {
+}).get('/liste_rendez_vous/:id', async (req, res) => {
     try {
+        const id = req.params.id 
         const collection = ConnectDb.db.collection('Rendez_vous')
-        const liste_rendez_vous = await collection.find().toArray()
+        const liste_rendez_vous = await collection.find({"client._id": new ObjectId(id)}).toArray()
         res.status(201).json(liste_rendez_vous)
     } catch (error) { 
         console.error(error)
