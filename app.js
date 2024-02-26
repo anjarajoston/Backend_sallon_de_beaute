@@ -4,6 +4,7 @@ const port = 8282;
 const app = express();
 const requestHandlers = require('./requestHandlers');
 const ConnectDb = require('./ConnectDb');
+const { MongoClient } = require('mongodb');
 const { ObjectId  } = require('mongodb')
 const Manager = require('./Manager');
 const Employer = require('./Employer');
@@ -26,7 +27,11 @@ app.use(cors({
 }));
 const utilitaire = new Utilitaire()
 app.get('/', async (req, res) => {
-    res.status(201).json("Hello Word")
+    const uri = 'mongodb+srv://mongo:mongo1234@tpmeanp11.hx6pz9h.mongodb.net/?retryWrites=true&w=majority&appName=TpMeanP11';
+    const dbName = 'mongoproject';
+    const collection = await ConnectDb.db.listCollections().toArray()
+    console.log('liste collections : ', collection.map(collection => collection.name))
+    res.status(201).json(collection)
 }).post('/login/:modele', async (req, res) => {
     const Connection = ConnectDb.db
     try {
