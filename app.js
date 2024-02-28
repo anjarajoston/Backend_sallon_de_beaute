@@ -57,6 +57,24 @@ app.get('/', async (req, res) => {
             console.log(New)
             if (taille === 0) {
                 await ConnectDb.db.collection(modele).insertOne(New);
+                if (modele == 'Employer') {
+                    const employer = await utilitaire.GetByEmail(Connection,"Employer",login)
+                    const horaire = {
+                        employer: {
+                          _id: employer._id,
+                          nom: employer.nom,
+                          prenom: employer.prenom,
+                          email: employer.email
+                        },
+                        lundi: { rentrer: "08:00", duree: 8 },
+                        mardi: { rentrer: "08:00", duree: 8 },
+                        mercredi: { rentrer: "8:00", duree: 8 },
+                        jeudi: { rentrer: "8:00", duree: 8 },
+                        vendredi: { rentrer: "8:00", duree: 8 },
+                        samedi: { rentrer: "8:00", duree: 8 }
+                    };
+                    await Connection.collection("Horaire").insertOne(horaire);
+                }
                 res.status(201).json(New)
             }else{
                 res.status(201).json(0)
@@ -148,7 +166,7 @@ app.get('/', async (req, res) => {
         const modele = "Horaire"
         const id = req.params.id  
         const collection = await ConnectDb.db.collection(modele)
-        const listepersonne = await collection.find({"employer._id": id}).toArray()
+        const listepersonne = await collection.find({"employer._id": new ObjectId(id)}).toArray()
         res.status(201).json(listepersonne)
     } catch (error) { 
         console.error(error)
