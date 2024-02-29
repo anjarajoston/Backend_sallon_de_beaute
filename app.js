@@ -98,7 +98,7 @@ app.get('/', async (req, res) => {
     try {
         const id = req.params.id 
         const collection = ConnectDb.db.collection('Rendez_vous')
-        const liste_rendez_vous = await collection.find({"client._id": new ObjectId(id)}).toArray()
+        const liste_rendez_vous = await collection.find({"client._id": id}).toArray()
         res.status(201).json(liste_rendez_vous)
     } catch (error) { 
         console.error(error)

@@ -1,6 +1,9 @@
 const { MongoClient } = require('mongodb')
 const url = 'mongodb+srv://mongo:mongo1234@tpmeanp11.hx6pz9h.mongodb.net/?retryWrites=true&w=majority&appName=TpMeanP11'
 const dbname = 'mongoproject'
+
+/*const url = 'mongodb://localhost:27017'
+const dbname = 'local'*/
 class ConnectDb{
     constructor(){
         this.connecter()
