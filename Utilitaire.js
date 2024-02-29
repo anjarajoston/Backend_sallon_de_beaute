@@ -9,5 +9,14 @@ class Utilitaire{
             return id;
         }return 0;
     }
+    async GetByEmail(Connection,modele,email){
+        const collection = Connection.collection(modele)
+        const listepersonne = await collection.find({"email": email}).toArray()
+        const taille = listepersonne.length
+        let id = 0;
+        if (taille == 1) {
+            return listepersonne[0];
+        }return 0;
+    }
 }
 module.exports = Utilitaire
