@@ -4,6 +4,7 @@ class Rendez_vous{
         this.service  =  data.service
         this.employer  =  data.employer
         this.date_heure = data.duredate_heure
+        this.etat = data.etat
     }
 }
 module.exports = Rendez_vous

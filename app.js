@@ -92,8 +92,12 @@ app.get('/', async (req, res) => {
     await ConnectDb.db.collection('Service').insertOne(new constructor(service));
 }).post('/nouveau_rendez_vous', async (req, res) => {
     const rendez_vous = req.body
-    console.log(rendez_vous)
+    const Rdv = new constructor(rendez_vous)
+    const dateH = Rdv.date_heure
+    const id_cl = Rdv.client._id
     await ConnectDb.db.collection('Rendez_vous').insertOne(new constructor(rendez_vous));
+    const Rendez = await utilitaire.GetRDVByIdCl(ConnectDb.db,"Rendez_vous",id_cl,dateH)
+    await ConnectDb.db.collection('Payement').insertOne({id_Rdv: Rendez._id,etat: 0});
 }).get('/liste_service', async (req, res) => {
     try {
         const collection = ConnectDb.db.collection('Service')
@@ -116,7 +120,17 @@ app.get('/', async (req, res) => {
     try {
         const id = req.params.id 
         const collection = ConnectDb.db.collection('Rendez_vous')
-        const liste_rendez_vous = await collection.find({"client._id": new ObjectId(id)}).toArray()
+        const liste_rendez_vous = await collection.find({"client._id": id}).toArray()
+        res.status(201).json(liste_rendez_vous)
+    } catch (error) { 
+        console.error(error)
+        res.status(500).send('Erreur de Serveur')
+    }
+}).get('/liste_rendez_vous_employer/:id', async (req, res) => {
+    try {
+        const id = req.params.id 
+        const collection = ConnectDb.db.collection('Rendez_vous')
+        const liste_rendez_vous = await collection.find({"employer._id": id}).toArray()
         res.status(201).json(liste_rendez_vous)
     } catch (error) { 
         console.error(error)
@@ -188,6 +202,48 @@ app.get('/', async (req, res) => {
                 duree : 8
               },
               // Ajoutez d'autres champs à mettre à jour selon vos besoins
+            }
+          };
+        const result = await collection.updateOne(filter, update);
+        res.status(201).json(result)
+    } catch (error) { 
+        // console.error(error)
+        res.status(500).send('Erreur de Serveur')
+    }
+}).post('/updateService', async (req, res) => {
+    try {
+        const Service = req.body
+        const modele = "Service"
+        const id = Service.id  
+        const nom = Service.nom  
+        const prix = Service.prix  
+        const duree = Service.duree  
+        const commission = Service.commission  
+        const collection = await ConnectDb.db.collection(modele)
+        const filter = { _id: new ObjectId(id) }; 
+        const update = {
+            $set: {
+                id : new ObjectId(id),
+                nom : nom,
+                prix : prix,
+                duree : duree,
+                commission: commission
+            }
+          };
+        const result = await collection.updateOne(filter, update);
+        res.status(201).json(result)
+    } catch (error) { 
+        // console.error(error)
+        res.status(500).send('Erreur de Serveur')
+    }
+}).get('/payer/:idRdv', async (req, res) => {
+    try {
+        const id = req.params.idRdv  
+        const collection = await ConnectDb.db.collection("Rendez_vous")
+        const filter = { _id: new ObjectId(id) }; 
+        const update = {
+            $set: {
+                etat : 1
             }
           };
         const result = await collection.updateOne(filter, update);
